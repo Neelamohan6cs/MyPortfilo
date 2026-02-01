@@ -4,7 +4,7 @@ export default function Api() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    fetch("http://myportfilo-1cl5.onrender.com/personal")
+    fetch("https://myportfilo-1cl5.onrender.com/personal")
       .then((res) => res.json())
       .then((result) => {
         console.log(result.data); 
