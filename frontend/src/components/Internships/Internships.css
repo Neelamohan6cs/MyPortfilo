@@ -1,0 +1,36 @@
+.internships-section { background: var(--bg2); }
+.timeline { display:flex; flex-direction:column; max-width:800px; }
+.tl-item { display:flex; gap:20px; padding-bottom:28px; position:relative; }
+.tl-item::before { content:''; position:absolute; left:17px; top:40px; bottom:0; width:2px; background:linear-gradient(to bottom, var(--primary), transparent); }
+.tl-item:last-child::before { display:none; }
+.tl-dot {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--primary), var(--accent2));
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--fh);
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: white;
+  margin-top: 2px;
+  box-shadow: 0 4px 14px rgba(37,99,235,0.3);
+}
+.tl-card { flex:1; background:white; }
+.tl-top { display:flex; justify-content:space-between; align-items:flex-start; gap:10px; flex-wrap:wrap; margin-bottom:10px; }
+.tl-role    { font-family:var(--fh); font-size:1.05rem; font-weight:800; color:var(--text); }
+.tl-company { color:var(--primary); font-size:0.86rem; font-weight:600; margin-top:3px; }
+.tl-duration {
+  font-family: var(--fm);
+  font-size: 0.73rem;
+  color: var(--primary);
+  background: rgba(37,99,235,0.08);
+  border: 1px solid rgba(37,99,235,0.15);
+  padding: 5px 12px;
+  border-radius: 6px;
+  white-space: nowrap;
+  font-weight: 600;
+}
+.tl-desc { color:var(--muted); font-size:0.9rem; line-height:1.8; }

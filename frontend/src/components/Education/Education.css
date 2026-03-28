@@ -1,0 +1,33 @@
+.education-section { background: white; }
+.edu-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:20px; }
+.edu-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: linear-gradient(135deg, #f8faff, #faf5ff);
+  border: 1.5px solid rgba(37,99,235,0.12);
+  position: relative;
+  overflow: hidden;
+}
+.edu-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 4px; height: 100%;
+  background: linear-gradient(to bottom, var(--primary), var(--accent2));
+  border-radius: 2px;
+}
+.edu-year  { font-family:var(--fm); font-size:0.76rem; color:var(--primary); font-weight:600; background:rgba(37,99,235,0.08); width:fit-content; padding:3px 10px; border-radius:5px; }
+.edu-degree { font-family:var(--fh); font-size:1.08rem; font-weight:800; color:var(--text); }
+.edu-inst  { color:var(--muted); font-size:0.87rem; line-height:1.5; }
+.edu-score {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--primary), var(--accent2));
+  color: white;
+  padding: 5px 14px;
+  border-radius: 6px;
+  font-family: var(--fm);
+  font-size: 0.8rem;
+  font-weight: 700;
+  width: fit-content;
+}
