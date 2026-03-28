@@ -9,7 +9,7 @@ import cloudinary.api
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Load .env (works locally, Fly uses env directly)
+# Load .env
 env_path = Path(BASE_DIR) / '.env'
 load_dotenv(dotenv_path=env_path)
 
@@ -31,11 +31,9 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
 
-    # ☁️ Cloudinary
     'cloudinary',
     'cloudinary_storage',
 
-    # 🔧 Your apps
     'apps.portfolio',
     'apps.users',
 ]
@@ -44,8 +42,6 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-
-    # ✅ WhiteNoise for static files
     'whitenoise.middleware.WhiteNoiseMiddleware',
 
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -56,7 +52,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# ✅ CORE
 ROOT_URLCONF = 'config.urls'
 WSGI_APPLICATION = 'config.wsgi.application'
 
@@ -77,7 +72,7 @@ TEMPLATES = [
     },
 ]
 
-# 🗄️ DATABASE (PostgreSQL - Supabase)
+# 🗄️ DATABASE (Supabase PostgreSQL)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -92,7 +87,7 @@ DATABASES = {
     }
 }
 
-# ☁️ CLOUDINARY CONFIG
+# ☁️ CLOUDINARY
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.getenv('CLOUD_NAME'),
     'API_KEY': os.getenv('API_KEY'),
@@ -107,7 +102,7 @@ cloudinary.config(
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-# 🔐 DJANGO REST + JWT
+# 🔐 REST + JWT
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -128,23 +123,18 @@ CORS_ALLOWED_ORIGINS = [
 ]
 CORS_ALLOW_CREDENTIALS = True
 
-# 🔑 PASSWORD VALIDATION
-AUTH_PASSWORD_VALIDATORS = []
-
-# 🌐 INTERNATIONAL
+# 🌐 TIME
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Asia/Kolkata'
 USE_I18N = True
 USE_TZ = True
 
-# 📁 STATIC & MEDIA
+# 📁 STATIC
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-# WhiteNoise storage
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Media (Cloudinary handles actual storage)
+# 📁 MEDIA
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
