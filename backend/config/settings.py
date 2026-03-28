@@ -9,14 +9,14 @@ import cloudinary.api
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# ✅ Load .env properly
+# Load .env (works locally, Fly uses env directly)
 env_path = Path(BASE_DIR) / '.env'
 load_dotenv(dotenv_path=env_path)
 
 # 🔐 SECURITY
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-fallback-key')
-DEBUG = True
-ALLOWED_HOSTS = ['*']
+DEBUG = os.getenv("DEBUG") == "True"
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
 
 # 📦 APPS
 INSTALLED_APPS = [
@@ -44,6 +44,10 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+
+    # ✅ WhiteNoise for static files
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -52,7 +56,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# ✅ REQUIRED (your error was here earlier)
+# ✅ CORE
 ROOT_URLCONF = 'config.urls'
 WSGI_APPLICATION = 'config.wsgi.application'
 
@@ -73,9 +77,7 @@ TEMPLATES = [
     },
 ]
 
-# 🗄️ DATABASE (MySQL)
-import os
-
+# 🗄️ DATABASE (PostgreSQL - Supabase)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -89,6 +91,7 @@ DATABASES = {
         },
     }
 }
+
 # ☁️ CLOUDINARY CONFIG
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.getenv('CLOUD_NAME'),
@@ -102,7 +105,6 @@ cloudinary.config(
     api_secret=os.getenv('API_SECRET')
 )
 
-# ✅ IMPORTANT (NO comma here)
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # 🔐 DJANGO REST + JWT
@@ -137,10 +139,14 @@ USE_TZ = True
 
 # 📁 STATIC & MEDIA
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# 👉 Local fallback (Cloudinary overrides)
+# WhiteNoise storage
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Media (Cloudinary handles actual storage)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# 🔢 DEFAULT FIELD (NO comma ❗)
+# 🔢 DEFAULT FIELD
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
