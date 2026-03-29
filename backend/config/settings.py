@@ -9,14 +9,21 @@ import cloudinary.api
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Load .env
+# Load .env (local only)
 env_path = Path(BASE_DIR) / '.env'
 load_dotenv(dotenv_path=env_path)
 
 # 🔐 SECURITY
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-fallback-key')
-DEBUG = os.getenv("DEBUG") == "True"
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
+
+# Render uses False
+DEBUG = os.getenv("DEBUG", "False") == "True"
+
+# ✅ IMPORTANT FIX
+ALLOWED_HOSTS = os.getenv(
+    "ALLOWED_HOSTS",
+    "neels-5yxn.onrender.com,localhost,127.0.0.1"
+).split(",")
 
 # 📦 APPS
 INSTALLED_APPS = [
@@ -42,6 +49,8 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+
+    # WhiteNoise
     'whitenoise.middleware.WhiteNoiseMiddleware',
 
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -52,6 +61,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# ✅ CORE
 ROOT_URLCONF = 'config.urls'
 WSGI_APPLICATION = 'config.wsgi.application'
 
@@ -72,15 +82,15 @@ TEMPLATES = [
     },
 ]
 
-# 🗄️ DATABASE (Supabase PostgreSQL)
+# 🗄️ DATABASE (Supabase - IPv4 pooler)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
+        'USER': os.getenv('DB_USER'),  # IMPORTANT: postgres.xxxxx
         'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
+        'HOST': os.getenv('DB_HOST'),  # aws-1-ap-south-1.pooler.supabase.com
+        'PORT': os.getenv('DB_PORT', '5432'),
         'OPTIONS': {
             'sslmode': 'require',
         },
@@ -102,7 +112,7 @@ cloudinary.config(
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-# 🔐 REST + JWT
+# 🔐 REST FRAMEWORK
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -112,29 +122,32 @@ REST_FRAMEWORK = {
     ),
 }
 
+# 🔐 JWT
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=24),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
 }
 
-# 🌍 CORS
+# 🌍 CORS (React frontend)
 CORS_ALLOWED_ORIGINS = [
     os.getenv('CORS_ORIGIN', 'http://localhost:3000')
 ]
+
 CORS_ALLOW_CREDENTIALS = True
 
-# 🌐 TIME
+# 🌐 INTERNATIONAL
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Asia/Kolkata'
 USE_I18N = True
 USE_TZ = True
 
-# 📁 STATIC
+# 📁 STATIC FILES
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# 📁 MEDIA
+# 📁 MEDIA (Cloudinary handles actual files)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
