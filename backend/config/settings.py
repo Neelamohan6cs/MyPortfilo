@@ -4,9 +4,6 @@ import os
 from dotenv import load_dotenv
 import cloudinary
 
-# ========================
-# BASE DIR
-# ========================
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # ========================
@@ -18,7 +15,6 @@ load_dotenv(os.path.join(BASE_DIR, ".env"))
 # SECURITY
 # ========================
 SECRET_KEY = os.getenv("SECRET_KEY")
-
 DEBUG = os.getenv("DEBUG", "True") == "True"
 
 ALLOWED_HOSTS = os.getenv(
@@ -51,7 +47,7 @@ INSTALLED_APPS = [
 # MIDDLEWARE
 # ========================
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',  # MUST be first
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
 
@@ -142,20 +138,10 @@ SIMPLE_JWT = {
 }
 
 # ========================
-# CORS
+# CORS (FINAL FIX)
 # ========================
-CORS_ALLOW_ALL_ORIGINS = True  # 🔥 TEMP FIX
-
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "https://neels-5yxn.onrender.com",
-]
-
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
-
-CSRF_TRUSTED_ORIGINS = [
-    "https://neels-5yxn.onrender.com",
-]
 
 # ========================
 # STATIC
@@ -172,4 +158,4 @@ LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Asia/Kolkata'
 USE_TZ = True
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'  # ✅ FIXED (removed comma)
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
