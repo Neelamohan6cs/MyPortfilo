@@ -3,6 +3,9 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+def home(request):
+    return HttpResponse("Backend is running 🚀")
+
 urlpatterns = [
     path('django-admin/', admin.site.urls),
     path('api/auth/', include('apps.users.urls')),
