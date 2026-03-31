@@ -5,17 +5,17 @@ from dotenv import load_dotenv
 import cloudinary
 
 # ========================
-# 📁 BASE DIR
+# BASE DIR
 # ========================
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # ========================
-# 🔐 LOAD ENV
+# LOAD ENV
 # ========================
 load_dotenv(os.path.join(BASE_DIR, ".env"))
 
 # ========================
-# 🔐 SECURITY
+# SECURITY
 # ========================
 SECRET_KEY = os.getenv("SECRET_KEY")
 
@@ -27,7 +27,7 @@ ALLOWED_HOSTS = os.getenv(
 ).split(",")
 
 # ========================
-# 📦 APPS
+# APPS
 # ========================
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -48,10 +48,10 @@ INSTALLED_APPS = [
 ]
 
 # ========================
-# ⚙️ MIDDLEWARE
+# MIDDLEWARE
 # ========================
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # MUST be first
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
 
@@ -64,13 +64,13 @@ MIDDLEWARE = [
 ]
 
 # ========================
-# 🌐 CORE
+# CORE
 # ========================
 ROOT_URLCONF = 'config.urls'
 WSGI_APPLICATION = 'config.wsgi.application'
 
 # ========================
-# 🎨 TEMPLATES
+# TEMPLATES
 # ========================
 TEMPLATES = [
     {
@@ -88,7 +88,7 @@ TEMPLATES = [
 ]
 
 # ========================
-# 🗄️ DATABASE
+# DATABASE
 # ========================
 DATABASES = {
     'default': {
@@ -105,8 +105,14 @@ DATABASES = {
 }
 
 # ========================
-# ☁️ CLOUDINARY
+# CLOUDINARY
 # ========================
+cloudinary.config(
+    cloud_name=os.getenv('CLOUD_NAME'),
+    api_key=os.getenv('API_KEY'),
+    api_secret=os.getenv('API_SECRET')
+)
+
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.getenv('CLOUD_NAME'),
     'API_KEY': os.getenv('API_KEY'),
@@ -116,19 +122,19 @@ CLOUDINARY_STORAGE = {
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # ========================
-# 🔐 REST FRAMEWORK
+# REST FRAMEWORK
 # ========================
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',  # 🔥 FIXED (login works)
+        'rest_framework.permissions.AllowAny',
     ]
 }
 
 # ========================
-# 🔑 JWT SETTINGS
+# JWT
 # ========================
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=24),
@@ -136,8 +142,10 @@ SIMPLE_JWT = {
 }
 
 # ========================
-# 🌍 CORS
+# CORS
 # ========================
+CORS_ALLOW_ALL_ORIGINS = True  # 🔥 TEMP FIX
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "https://neels-5yxn.onrender.com",
@@ -150,7 +158,7 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 # ========================
-# 📁 STATIC
+# STATIC
 # ========================
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
@@ -158,10 +166,10 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # ========================
-# 🌐 OTHER
+# OTHER
 # ========================
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Asia/Kolkata'
 USE_TZ = True
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'  # ✅ FIXED (removed comma)
