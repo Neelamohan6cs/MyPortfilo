@@ -4,9 +4,14 @@ import os
 from dotenv import load_dotenv
 import cloudinary
 
+# ========================
+# 📁 BASE DIR
+# ========================
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Load .env (only for local)
+# ========================
+# 🔐 LOAD ENV
+# ========================
 load_dotenv(os.path.join(BASE_DIR, ".env"))
 
 # ========================
@@ -14,11 +19,11 @@ load_dotenv(os.path.join(BASE_DIR, ".env"))
 # ========================
 SECRET_KEY = os.getenv("SECRET_KEY")
 
-DEBUG = os.getenv("DEBUG", "False") == "True"
+DEBUG = os.getenv("DEBUG", "True") == "True"
 
 ALLOWED_HOSTS = os.getenv(
     "ALLOWED_HOSTS",
-    "neels-5yxn.onrender.com,localhost,127.0.0.1"
+    "localhost,127.0.0.1,neels-5yxn.onrender.com"
 ).split(",")
 
 # ========================
@@ -83,7 +88,7 @@ TEMPLATES = [
 ]
 
 # ========================
-# 🗄️ DATABASE (Supabase IPv4)
+# 🗄️ DATABASE
 # ========================
 DATABASES = {
     'default': {
@@ -102,32 +107,46 @@ DATABASES = {
 # ========================
 # ☁️ CLOUDINARY
 # ========================
-cloudinary.config(
-    cloud_name=os.getenv('CLOUD_NAME'),
-    api_key=os.getenv('API_KEY'),
-    api_secret=os.getenv('API_SECRET')
-)
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv('CLOUD_NAME'),
+    'API_KEY': os.getenv('API_KEY'),
+    'API_SECRET': os.getenv('API_SECRET'),
+}
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # ========================
-# 🔐 JWT
+# 🔐 REST FRAMEWORK
 # ========================
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',  # 🔥 FIXED (login works)
+    ]
 }
 
+# ========================
+# 🔑 JWT SETTINGS
+# ========================
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=24),
+    'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
 # ========================
 # 🌍 CORS
 # ========================
 CORS_ALLOWED_ORIGINS = [
-    os.getenv('CORS_ORIGIN', 'http://localhost:3000')
+    "http://localhost:3000",
+    "https://neels-5yxn.onrender.com",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://neels-5yxn.onrender.com",
 ]
 
 # ========================
