@@ -4,6 +4,9 @@ import os
 from dotenv import load_dotenv
 import cloudinary
 
+# ========================
+# BASE DIR
+# ========================
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # ========================
@@ -15,7 +18,8 @@ load_dotenv(os.path.join(BASE_DIR, ".env"))
 # SECURITY
 # ========================
 SECRET_KEY = os.getenv("SECRET_KEY")
-DEBUG = os.getenv("DEBUG", "True") == "True"
+
+DEBUG = os.getenv("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = os.getenv(
     "ALLOWED_HOSTS",
@@ -47,7 +51,7 @@ INSTALLED_APPS = [
 # MIDDLEWARE
 # ========================
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # MUST be first
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
 
@@ -84,15 +88,15 @@ TEMPLATES = [
 ]
 
 # ========================
-# DATABASE
+# DATABASE (SUPABASE IPv4)
 # ========================
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
+        'USER': os.getenv('DB_USER'),  # e.g. postgres.xxxxx
         'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
+        'HOST': os.getenv('DB_HOST'),  # aws-1-ap-south-1.pooler.supabase.com
         'PORT': os.getenv('DB_PORT', '5432'),
         'OPTIONS': {
             'sslmode': 'require',
@@ -138,10 +142,22 @@ SIMPLE_JWT = {
 }
 
 # ========================
-# CORS (FINAL FIX)
+# CORS (FINAL PRODUCTION)
 # ========================
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "https://neelamohan-profile.vercel.app",  # 🔥 your frontend
+]
+
 CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_HEADERS = ['*']
+CORS_ALLOW_METHODS = ['*']
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://neels-5yxn.onrender.com",
+    "https://neelamohan-profile.vercel.app",
+]
 
 # ========================
 # STATIC
