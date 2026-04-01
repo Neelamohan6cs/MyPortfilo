@@ -146,6 +146,7 @@ SIMPLE_JWT = {
 # ========================
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "https://neelamohan.vercel.app",
     "https://neelamohan-profile.vercel.app",  # 🔥 your frontend
 ]
 
