@@ -1,16 +1,22 @@
+
 from pathlib import Path
 from datetime import timedelta
 import os
 from dotenv import load_dotenv
 import cloudinary
 
+# ========================
+# BASE DIR
+# ========================
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Load .env (only for local)
+# ========================
+# LOAD ENV
+# ========================
 load_dotenv(os.path.join(BASE_DIR, ".env"))
 
 # ========================
-# 🔐 SECURITY
+# SECURITY
 # ========================
 SECRET_KEY = os.getenv("SECRET_KEY")
 
@@ -18,11 +24,11 @@ DEBUG = os.getenv("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = os.getenv(
     "ALLOWED_HOSTS",
-    "neels-5yxn.onrender.com,localhost,127.0.0.1"
+    "localhost,127.0.0.1,neels-5yxn.onrender.com"
 ).split(",")
 
 # ========================
-# 📦 APPS
+# APPS
 # ========================
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -43,10 +49,10 @@ INSTALLED_APPS = [
 ]
 
 # ========================
-# ⚙️ MIDDLEWARE
+# MIDDLEWARE
 # ========================
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # MUST be first
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
 
@@ -59,13 +65,13 @@ MIDDLEWARE = [
 ]
 
 # ========================
-# 🌐 CORE
+# CORE
 # ========================
 ROOT_URLCONF = 'config.urls'
 WSGI_APPLICATION = 'config.wsgi.application'
 
 # ========================
-# 🎨 TEMPLATES
+# TEMPLATES
 # ========================
 TEMPLATES = [
     {
@@ -83,15 +89,15 @@ TEMPLATES = [
 ]
 
 # ========================
-# 🗄️ DATABASE (Supabase IPv4)
+# DATABASE (SUPABASE IPv4)
 # ========================
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
+        'USER': os.getenv('DB_USER'),  # e.g. postgres.xxxxx
         'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
+        'HOST': os.getenv('DB_HOST'),  # aws-1-ap-south-1.pooler.supabase.com
         'PORT': os.getenv('DB_PORT', '5432'),
         'OPTIONS': {
             'sslmode': 'require',
@@ -100,7 +106,7 @@ DATABASES = {
 }
 
 # ========================
-# ☁️ CLOUDINARY
+# CLOUDINARY
 # ========================
 cloudinary.config(
     cloud_name=os.getenv('CLOUD_NAME'),
@@ -108,30 +114,54 @@ cloudinary.config(
     api_secret=os.getenv('API_SECRET')
 )
 
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv('CLOUD_NAME'),
+    'API_KEY': os.getenv('API_KEY'),
+    'API_SECRET': os.getenv('API_SECRET'),
+}
+
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # ========================
-# 🔐 JWT
+# REST FRAMEWORK
 # ========================
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ]
 }
 
+# ========================
+# JWT
+# ========================
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=24),
+    'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
 # ========================
-# 🌍 CORS
+# CORS (FINAL PRODUCTION)
 # ========================
 CORS_ALLOWED_ORIGINS = [
-    os.getenv('CORS_ORIGIN', 'http://localhost:3000')
+    "http://localhost:3000",
+    "https://neelamohan-profile.vercel.app",  # 🔥 your frontend
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_HEADERS = ['*']
+CORS_ALLOW_METHODS = ['*']
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://neels-5yxn.onrender.com",
+    "https://neelamohan-profile.vercel.app",
 ]
 
 # ========================
-# 📁 STATIC
+# STATIC
 # ========================
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
@@ -139,7 +169,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # ========================
-# 🌐 OTHER
+# OTHER
 # ========================
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Asia/Kolkata'
