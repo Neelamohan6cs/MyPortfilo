@@ -38,7 +38,7 @@ export default function AdminLogin() {
             <input
               type="text"
               value={username}
-              placeholder="Neelamohan"
+              placeholder="Username"
               required
               onChange={(e) => setUsername(e.target.value)}
             />
@@ -48,7 +48,7 @@ export default function AdminLogin() {
             <input
               type="password"
               value={password}
-              placeholder="1234"
+              placeholder="enter password"
               required
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -58,7 +58,7 @@ export default function AdminLogin() {
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
-        <p className="login-hint">Username: Neelamohan &nbsp;|&nbsp; Password: 1234</p>
+        {/* <p className="login-hint">Username: Neelamohan &nbsp;|&nbsp; Password: 1234</p> */}
       </div>
     </div>
   );

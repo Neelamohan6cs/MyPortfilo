@@ -46,7 +46,7 @@ export default function Navbar() {
         ))}
       </ul>
 
-      <Link to="/admin" className="nav-admin">Admin</Link>
+      {/* <Link to="/admin" className="nav-admin">Admin</Link> */}
 
       <button className="hamburger" onClick={() => setOpen(!open)}>
         <span className={open ? 'open' : ''} />
@@ -59,7 +59,7 @@ export default function Navbar() {
           {NAV_LINKS.map((link) => (
             <button key={link} onClick={() => scrollTo(link.toLowerCase())}>{link}</button>
           ))}
-          <Link to="/admin" onClick={() => setOpen(false)}>Admin Panel</Link>
+          {/* <Link to="/admin" onClick={() => setOpen(false)}>Admin Panel</Link> */}
         </div>
       )}
     </nav>
