@@ -17,13 +17,16 @@ export default function Gallery() {
   const isDragging = useRef(false);
   const dragStart  = useRef(0);
 
-  const [images,  setImages]  = useState([]);
+  const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [lightbox, setLightbox] = useState(null);
 
   useEffect(() => {
     API.get('/gallery/')
-      .then((res) => { setImages(res.data); setLoading(false); })
+      .then((res) => {
+        setImages(res.data);
+        setLoading(false);
+      })
       .catch(() => setLoading(false));
   }, []);
 
@@ -40,37 +43,42 @@ export default function Gallery() {
       }
       animRef.current = requestAnimationFrame(animate);
     };
+
     animRef.current = requestAnimationFrame(animate);
 
-    const stop  = () => cancelAnimationFrame(animRef.current);
-    const start = () => { animRef.current = requestAnimationFrame(animate); };
+    const stop = () => cancelAnimationFrame(animRef.current);
+    const start = () => animRef.current = requestAnimationFrame(animate);
 
-    const onMouseDown  = (e) => { isDragging.current = true;  dragStart.current = e.clientX - posRef.current; track.style.cursor = 'grabbing'; };
-    const onMouseMove  = (e) => { if (!isDragging.current) return; posRef.current = e.clientX - dragStart.current; track.style.transform = `translateX(${posRef.current}px)`; };
-    const onMouseUp    = ()  => { isDragging.current = false; track.style.cursor = 'grab'; };
-    const onTouchStart = (e) => { isDragging.current = true;  dragStart.current = e.touches[0].clientX - posRef.current; };
-    const onTouchMove  = (e) => { if (!isDragging.current) return; posRef.current = e.touches[0].clientX - dragStart.current; track.style.transform = `translateX(${posRef.current}px)`; };
-    const onTouchEnd   = ()  => { isDragging.current = false; };
+    const onMouseDown = (e) => {
+      isDragging.current = true;
+      dragStart.current = e.clientX - posRef.current;
+      track.style.cursor = 'grabbing';
+    };
 
-    track.addEventListener('mouseenter',  stop);
-    track.addEventListener('mouseleave',  start);
-    track.addEventListener('mousedown',   onMouseDown);
-    window.addEventListener('mousemove',  onMouseMove);
-    window.addEventListener('mouseup',    onMouseUp);
-    track.addEventListener('touchstart',  onTouchStart, { passive: true });
-    track.addEventListener('touchmove',   onTouchMove,  { passive: true });
-    track.addEventListener('touchend',    onTouchEnd);
+    const onMouseMove = (e) => {
+      if (!isDragging.current) return;
+      posRef.current = e.clientX - dragStart.current;
+      track.style.transform = `translateX(${posRef.current}px)`;
+    };
+
+    const onMouseUp = () => {
+      isDragging.current = false;
+      track.style.cursor = 'grab';
+    };
+
+    track.addEventListener('mouseenter', stop);
+    track.addEventListener('mouseleave', start);
+    track.addEventListener('mousedown', onMouseDown);
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
 
     return () => {
       cancelAnimationFrame(animRef.current);
-      track.removeEventListener('mouseenter',  stop);
-      track.removeEventListener('mouseleave',  start);
-      track.removeEventListener('mousedown',   onMouseDown);
-      window.removeEventListener('mousemove',  onMouseMove);
-      window.removeEventListener('mouseup',    onMouseUp);
-      track.removeEventListener('touchstart',  onTouchStart);
-      track.removeEventListener('touchmove',   onTouchMove);
-      track.removeEventListener('touchend',    onTouchEnd);
+      track.removeEventListener('mouseenter', stop);
+      track.removeEventListener('mouseleave', start);
+      track.removeEventListener('mousedown', onMouseDown);
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
     };
   }, [images.length]);
 
@@ -81,50 +89,36 @@ export default function Gallery() {
   return (
     <section className="gallery-section">
       <div className="gallery-head">
-        <span className="section-label"><span className="pulse" /> Gallery</span>
-        <h2 className="section-title">My <span>Participation</span></h2>
-       
+        <h2 className="section-title">
+          My <span>Achievements & Gallery</span>
+        </h2>
       </div>
 
       <div className="gallery-wrapper">
         <div className="fade-l" />
         <div className="fade-r" />
-        <div className="gallery-track" ref={trackRef} style={{ cursor: 'grab' }}>
+
+        <div className="gallery-track" ref={trackRef}>
           {doubled.map((item, i) => (
-            <div
-              key={i}
-              className="g-card"
-              onClick={() => setLightbox(item)}
-            >
+            <div key={i} className="g-card" onClick={() => setLightbox(item)}>
+              
               <div className="g-img-wrap">
-                {item.image_url ? (
+                {item.image_url && (
                   <img
                     src={item.image_url}
                     alt={item.title}
                     className="g-img"
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                      e.target.parentNode.querySelector('.g-fallback').style.display = 'flex';
-                    }}
                   />
-                ) : null}
-                <div
-                  className="g-fallback"
-                  style={{
-                    display: item.image_url ? 'none' : 'flex',
-                    background: `${CAT_COLOR[item.category] || '#2563eb'}10`,
-                  }}
-                >
-                  <span className="g-fallback-icon">📷</span>
-                  <span className="g-fallback-text">No image</span>
-                </div>
-                <div className="g-hover-overlay">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
-                </div>
+                )}
               </div>
+
               <div className="g-footer">
+                <span className="g-badge">
+                  {item.category}
+                </span>
                 <p className="g-title">{item.title}</p>
               </div>
+
             </div>
           ))}
         </div>
@@ -133,23 +127,11 @@ export default function Gallery() {
       {lightbox && (
         <div className="lightbox" onClick={() => setLightbox(null)}>
           <div className="lightbox-box" onClick={(e) => e.stopPropagation()}>
-            <button className="lb-close" onClick={() => setLightbox(null)}>✕</button>
-            {lightbox.image_url && (
-              <img src={lightbox.image_url} alt={lightbox.title} className="lb-img" />
-            )}
+            <button className="lb-close">✕</button>
+            <img src={lightbox.image_url} alt="" className="lb-img" />
             <div className="lb-info">
-              <span
-                className="lb-badge"
-                style={{
-                  background: `${CAT_COLOR[lightbox.category] || '#2563eb'}15`,
-                  color:       CAT_COLOR[lightbox.category]    || '#2563eb',
-                  border:     `1px solid ${CAT_COLOR[lightbox.category] || '#2563eb'}30`,
-                }}
-              >
-                {lightbox.category}
-              </span>
-              <h3 className="lb-title">{lightbox.title}</h3>
-              {lightbox.caption && <p className="lb-caption">{lightbox.caption}</p>}
+              <h3>{lightbox.title}</h3>
+              <p>{lightbox.caption}</p>
             </div>
           </div>
         </div>

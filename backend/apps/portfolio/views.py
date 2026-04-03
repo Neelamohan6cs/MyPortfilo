@@ -8,25 +8,28 @@ from .serializers import (
     InternshipSerializer, CertificationSerializer, WorkshopSerializer, ContactMessageSerializer
 )
 
+# ================= PUBLIC APIs ================= #
 
 class PublicPortfolioView(APIView):
     permission_classes = [AllowAny]
+    authentication_classes = []   # ✅ FIX
 
     def get(self, request):
         hero = Hero.objects.first()
         return Response({
-            'hero':           HeroSerializer(hero, context={'request': request}).data if hero else {},
-            'skills':         SkillSerializer(Skill.objects.all(), many=True).data,
-            'projects':       ProjectSerializer(Project.objects.all(), many=True, context={'request': request}).data,
-            'education':      EducationSerializer(Education.objects.all(), many=True).data,
-            'internships':    InternshipSerializer(Internship.objects.all(), many=True).data,
+            'hero': HeroSerializer(hero, context={'request': request}).data if hero else {},
+            'skills': SkillSerializer(Skill.objects.all(), many=True).data,
+            'projects': ProjectSerializer(Project.objects.all(), many=True, context={'request': request}).data,
+            'education': EducationSerializer(Education.objects.all(), many=True).data,
+            'internships': InternshipSerializer(Internship.objects.all(), many=True).data,
             'certifications': CertificationSerializer(Certification.objects.all(), many=True, context={'request': request}).data,
-            'workshops':      WorkshopSerializer(Workshop.objects.all(), many=True, context={'request': request}).data,
+            'workshops': WorkshopSerializer(Workshop.objects.all(), many=True, context={'request': request}).data,
         })
 
 
 class PublicContactView(APIView):
     permission_classes = [AllowAny]
+    authentication_classes = []   # ✅ FIX
 
     def post(self, request):
         s = ContactMessageSerializer(data=request.data)
@@ -36,9 +39,22 @@ class PublicContactView(APIView):
         return Response(s.errors, status=400)
 
 
+class PublicGalleryView(APIView):
+    permission_classes = [AllowAny]
+    authentication_classes = []   # ✅ FIX
+
+    def get(self, request):
+        from .models import GalleryImage
+        from .serializers import GalleryImageSerializer
+        images = GalleryImage.objects.all()
+        return Response(GalleryImageSerializer(images, many=True, context={'request': request}).data)
+
+
+# ================= ADMIN APIs ================= #
+
 class AdminHeroView(APIView):
     permission_classes = [IsAuthenticated]
-    parser_classes     = [MultiPartParser, FormParser, JSONParser]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     def get(self, request):
         hero = Hero.objects.first()
@@ -85,7 +101,7 @@ class AdminSkillDetailView(APIView):
 
 class AdminProjectListView(APIView):
     permission_classes = [IsAuthenticated]
-    parser_classes     = [MultiPartParser, FormParser, JSONParser]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     def get(self, request):
         return Response(ProjectSerializer(Project.objects.all(), many=True, context={'request': request}).data)
@@ -100,7 +116,7 @@ class AdminProjectListView(APIView):
 
 class AdminProjectDetailView(APIView):
     permission_classes = [IsAuthenticated]
-    parser_classes     = [MultiPartParser, FormParser, JSONParser]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     def put(self, request, pk):
         proj = Project.objects.get(pk=pk)
@@ -147,7 +163,7 @@ class AdminInternshipDetailView(APIView):
 
 class AdminCertListView(APIView):
     permission_classes = [IsAuthenticated]
-    parser_classes     = [MultiPartParser, FormParser, JSONParser]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     def get(self, request):
         return Response(CertificationSerializer(Certification.objects.all(), many=True, context={'request': request}).data)
@@ -162,7 +178,7 @@ class AdminCertListView(APIView):
 
 class AdminCertDetailView(APIView):
     permission_classes = [IsAuthenticated]
-    parser_classes     = [MultiPartParser, FormParser, JSONParser]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     def put(self, request, pk):
         obj = Certification.objects.get(pk=pk)
@@ -179,7 +195,7 @@ class AdminCertDetailView(APIView):
 
 class AdminWorkshopListView(APIView):
     permission_classes = [IsAuthenticated]
-    parser_classes     = [MultiPartParser, FormParser, JSONParser]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     def get(self, request):
         return Response(WorkshopSerializer(Workshop.objects.all(), many=True, context={'request': request}).data)
@@ -194,7 +210,7 @@ class AdminWorkshopListView(APIView):
 
 class AdminWorkshopDetailView(APIView):
     permission_classes = [IsAuthenticated]
-    parser_classes     = [MultiPartParser, FormParser, JSONParser]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     def put(self, request, pk):
         obj = Workshop.objects.get(pk=pk)
@@ -216,19 +232,9 @@ class AdminMessagesView(APIView):
         return Response(ContactMessageSerializer(ContactMessage.objects.all(), many=True).data)
 
 
-class PublicGalleryView(APIView):
-    permission_classes = [AllowAny]
-
-    def get(self, request):
-        from .models import GalleryImage
-        from .serializers import GalleryImageSerializer
-        images = GalleryImage.objects.all()
-        return Response(GalleryImageSerializer(images, many=True, context={'request': request}).data)
-
-
 class AdminGalleryListView(APIView):
     permission_classes = [IsAuthenticated]
-    parser_classes     = [MultiPartParser, FormParser, JSONParser]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     def get(self, request):
         from .models import GalleryImage
@@ -248,7 +254,7 @@ class AdminGalleryListView(APIView):
 
 class AdminGalleryDetailView(APIView):
     permission_classes = [IsAuthenticated]
-    parser_classes     = [MultiPartParser, FormParser, JSONParser]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     def put(self, request, pk):
         from .models import GalleryImage
