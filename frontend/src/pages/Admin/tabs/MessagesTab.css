@@ -25,7 +25,6 @@
 .msg-date  { font-family: var(--fm); font-size: 0.74rem; color: var(--muted); margin-left: auto; }
 .msg-body  { color: var(--muted); font-size: 0.88rem; line-height: 1.75; }
 
-
 .reply-btn {
   display: inline-block;
   margin-top: 10px;
