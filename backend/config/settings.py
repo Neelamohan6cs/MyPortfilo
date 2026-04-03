@@ -1,4 +1,3 @@
-
 from pathlib import Path
 from datetime import timedelta
 import os
@@ -13,14 +12,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ========================
 # LOAD ENV
 # ========================
-load_dotenv(os.path.join(BASE_DIR, ".env"))
+load_dotenv()
 
 # ========================
 # SECURITY
 # ========================
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = os.getenv("SECRET_KEY", "unsafe-secret-key")
 
-DEBUG = os.getenv("DEBUG", "False") == "True"
+DEBUG = os.getenv("DEBUG", "True") == "True"
 
 ALLOWED_HOSTS = os.getenv(
     "ALLOWED_HOSTS",
@@ -58,7 +57,10 @@ MIDDLEWARE = [
 
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+
+    # ⚠️ Disable CSRF for API usage (safe for JWT APIs)
     'django.middleware.csrf.CsrfViewMiddleware',
+
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -89,15 +91,15 @@ TEMPLATES = [
 ]
 
 # ========================
-# DATABASE (SUPABASE IPv4)
+# DATABASE
 # ========================
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),  # e.g. postgres.xxxxx
+        'USER': os.getenv('DB_USER'),
         'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),  # aws-1-ap-south-1.pooler.supabase.com
+        'HOST': os.getenv('DB_HOST'),
         'PORT': os.getenv('DB_PORT', '5432'),
         'OPTIONS': {
             'sslmode': 'require',
@@ -143,29 +145,13 @@ SIMPLE_JWT = {
 }
 
 # ========================
-# CORS (FINAL PRODUCTION)
+# CORS
 # ========================
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-<<<<<<< HEAD
-=======
-    "https://neelamohan.vercel.app",
->>>>>>> 696c36a7c7b921abe65d3499407b5e55fcd773f4
-    "https://neelamohan-profile.vercel.app",  # 🔥 your frontend
-]
-
+CORS_ALLOW_ALL_ORIGINS = True   # ⚠️ change to specific domain in production
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_ALLOW_HEADERS = ['*']
-CORS_ALLOW_METHODS = ['*']
-
-CSRF_TRUSTED_ORIGINS = [
-    "https://neels-5yxn.onrender.com",
-    "https://neelamohan-profile.vercel.app",
-]
-
 # ========================
-# STATIC
+# STATIC FILES
 # ========================
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
