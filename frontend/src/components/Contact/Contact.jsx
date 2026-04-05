@@ -57,15 +57,15 @@ export default function Contact({ hero }) {
         <form className="contact-form card" onSubmit={handleSubmit}>
           <div className="form-field">
             <label>Your Name</label>
-            <input name="name" value={form.name} placeholder="John Doe" required onChange={onChange} />
+            <input name="name" value={form.name} placeholder="Your Name" required onChange={onChange} />
           </div>
           <div className="form-field">
             <label>Email Address</label>
-            <input name="email" type="email" value={form.email} placeholder="john@company.com" required onChange={onChange} />
+            <input name="email" type="email" value={form.email} placeholder="your mail" required onChange={onChange} />
           </div>
           <div className="form-field">
             <label>Message</label>
-            <textarea name="message" rows={5} value={form.message} placeholder="Hi Neelamohan, I'd like to discuss an opportunity..." required onChange={onChange} />
+            <textarea name="message" rows={5} value={form.message} placeholder="Your message here..." required onChange={onChange} />
           </div>
           {status === 'success' && <p className="form-ok">✓ Message sent successfully!</p>}
           {status === 'error'   && <p className="form-err">✗ Something went wrong. Try again.</p>}

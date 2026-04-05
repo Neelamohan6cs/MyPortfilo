@@ -12,13 +12,20 @@ from .serializers import (
 
 class PublicPortfolioView(APIView):
     permission_classes = [AllowAny]
-    authentication_classes = []   # ✅ FIX
+    authentication_classes = []
 
     def get(self, request):
         hero = Hero.objects.first()
         return Response({
             'hero': HeroSerializer(hero, context={'request': request}).data if hero else {},
-            'skills': SkillSerializer(Skill.objects.all(), many=True).data,
+
+            # ✅ FIXED (added context)
+            'skills': SkillSerializer(
+                Skill.objects.all(),
+                many=True,
+                context={'request': request}
+            ).data,
+
             'projects': ProjectSerializer(Project.objects.all(), many=True, context={'request': request}).data,
             'education': EducationSerializer(Education.objects.all(), many=True).data,
             'internships': InternshipSerializer(Internship.objects.all(), many=True).data,
@@ -29,7 +36,7 @@ class PublicPortfolioView(APIView):
 
 class PublicContactView(APIView):
     permission_classes = [AllowAny]
-    authentication_classes = []   # ✅ FIX
+    authentication_classes = []
 
     def post(self, request):
         s = ContactMessageSerializer(data=request.data)
@@ -41,7 +48,7 @@ class PublicContactView(APIView):
 
 class PublicGalleryView(APIView):
     permission_classes = [AllowAny]
-    authentication_classes = []   # ✅ FIX
+    authentication_classes = []
 
     def get(self, request):
         from .models import GalleryImage
@@ -69,26 +76,44 @@ class AdminHeroView(APIView):
         return Response(s.errors, status=400)
 
 
+# ✅ UPDATED (image upload supported)
 class AdminSkillListView(APIView):
     permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
 
     def get(self, request):
-        return Response(SkillSerializer(Skill.objects.all(), many=True).data)
+        return Response(
+            SkillSerializer(
+                Skill.objects.all(),
+                many=True,
+                context={'request': request}
+            ).data
+        )
 
     def post(self, request):
-        s = SkillSerializer(data=request.data)
+        s = SkillSerializer(
+            data=request.data,
+            context={'request': request}
+        )
         if s.is_valid():
             s.save()
             return Response(s.data, status=201)
         return Response(s.errors, status=400)
 
 
+# ✅ UPDATED (image update supported)
 class AdminSkillDetailView(APIView):
     permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
 
     def put(self, request, pk):
         skill = Skill.objects.get(pk=pk)
-        s = SkillSerializer(skill, data=request.data, partial=True)
+        s = SkillSerializer(
+            skill,
+            data=request.data,
+            partial=True,
+            context={'request': request}
+        )
         if s.is_valid():
             s.save()
             return Response(s.data)

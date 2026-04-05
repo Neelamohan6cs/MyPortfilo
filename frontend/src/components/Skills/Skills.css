@@ -1,30 +1,192 @@
-.skills-section { background: var(--bg2); }
-.skills-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:18px; }
-.skill-card { background: white; }
-.skill-cat {
-  font-family: var(--fh);
-  font-size: 0.8rem;
-  font-weight: 800;
-  background: linear-gradient(135deg, var(--primary), var(--accent2));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin-bottom: 18px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid var(--bg2);
+/* ============================================================
+   SKILLS SECTION — icon-grid layout, dark navy theme
+   Clean + Centered + Professional
+   ============================================================ */
+
+.skills-section {
+  background: var(--bg2, #0a1628);
+  padding: 80px 40px 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
 }
-.skill-row { margin-bottom: 14px; }
-.skill-meta { display:flex; justify-content:space-between; margin-bottom:7px; }
-.skill-name { font-size:0.9rem; font-weight:600; color:var(--text); }
-.skill-pct  { font-family:var(--fm); font-size:0.78rem; color:var(--primary); font-weight:600; }
-.skill-track { height:6px; background:var(--bg3); border-radius:6px; overflow:hidden; }
-.skill-fill {
+
+/* ── Header (LEFT aligned) ───────────────────────────────── */
+.skills-header {
+  text-align: left;           /* ✅ LEFT */
+  width: 100%;
+  max-width: 900px;           /* align with grid */
+  margin-bottom: 56px;
+}
+
+.skills-title {
+  font-family: var(--fh, 'Segoe UI', sans-serif);
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.02em;
+  margin-bottom: 16px;
+}
+
+.skills-title-accent {
+  color: #f5a623;
+  font-style: italic;
+}
+
+.skills-sub {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.55);
+  max-width: 600px;
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+}
+
+/* ── Icon Grid ───────────────────────────────────────────── */
+.skills-icon-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+  max-width: 900px;
+  width: 100%;
+}
+
+/* ── Skill Tile (CENTERED) ───────────────────────────────── */
+.skill-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;     /* ✅ center horizontally */
+  justify-content: center; /* ✅ center vertically */
+  text-align: center;      /* ✅ center text */
+  gap: 10px;               /* spacing */
+
+  padding: 28px 24px 20px;
+  background: #0d1f3c;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  cursor: default;
+  overflow: hidden;
+  min-height: 160px;
+
+  opacity: 0;
+  transform: translateY(18px);
+  animation: tileReveal 0.5s ease forwards;
+}
+
+@keyframes tileReveal {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hover Glow */
+.skill-tile::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at 30% 30%,
+    rgba(80, 160, 255, 0.12) 0%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.skill-tile:hover::before {
+  opacity: 1;
+}
+
+/* Left Accent Line */
+.skill-tile::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 3px;
   height: 100%;
-  width: var(--w, 0%);
-  background: linear-gradient(90deg, var(--primary), var(--accent));
-  border-radius: 6px;
-  animation: grow 1.2s cubic-bezier(0.4,0,0.2,1) forwards;
+  background: linear-gradient(
+    180deg,
+    var(--primary, #3b82f6),
+    var(--accent, #06b6d4)
+  );
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 0.3s ease;
 }
-@keyframes grow { from { width:0; } to { width:var(--w); } }
+
+.skill-tile:hover::after {
+  transform: scaleY(1);
+}
+
+.skill-tile:hover {
+  background: #122040;
+  border-color: rgba(80, 160, 255, 0.25);
+  transform: translateY(-2px);
+  transition: background 0.25s, border-color 0.25s, transform 0.25s;
+}
+
+/* ── Icon ───────────────────────────────────────────────── */
+.skill-icon-wrap {
+  width: 70px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.skill-icon-img {
+  width: 120%;     /* 🔥 controls size */
+  height: 120%;
+  object-fit: contain;
+
+  display: block;
+  margin: 0 auto;
+
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.4));
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.skill-tile:hover .skill-icon-img {
+  transform: scale(1.2);
+  filter: drop-shadow(0 4px 16px rgba(80, 160, 255, 0.35));
+}
+
+/* ── Skill Name ─────────────────────────────────────────── */
+.skill-tile-name {
+  font-family: var(--fh, 'Segoe UI', sans-serif);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.75);
+  transition: color 0.25s;
+}
+
+.skill-tile:hover .skill-tile-name {
+  color: #ffffff;
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .skills-icon-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .skills-section {
+    padding: 60px 20px 80px;
+  }
+}
+
+@media (max-width: 420px) {
+  .skill-tile {
+    min-height: 130px;
+    padding: 22px 18px 16px;
+  }
+
+  .skill-icon-wrap {
+    width: 50px;
+    height: 50px;
+  }
+}

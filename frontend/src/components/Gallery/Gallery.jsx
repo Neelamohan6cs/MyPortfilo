@@ -2,14 +2,6 @@ import React, { useRef, useEffect, useState } from 'react';
 import API from '../../utils/api';
 import './Gallery.css';
 
-const CAT_COLOR = {
-  certificate: '#2563eb',
-  internship:  '#7c3aed',
-  workshop:    '#0891b2',
-  project:     '#059669',
-  achievement: '#d97706',
-};
-
 export default function Gallery() {
   const trackRef   = useRef(null);
   const animRef    = useRef(null);
@@ -18,16 +10,12 @@ export default function Gallery() {
   const dragStart  = useRef(0);
 
   const [images, setImages] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [lightbox, setLightbox] = useState(null);
 
   useEffect(() => {
     API.get('/gallery/')
-      .then((res) => {
-        setImages(res.data);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+      .then((res) => setImages(res.data))
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -36,7 +24,7 @@ export default function Gallery() {
 
     const animate = () => {
       if (!isDragging.current) {
-        posRef.current -= 0.5;
+        posRef.current -= 0.4;
         const half = track.scrollWidth / 2;
         if (Math.abs(posRef.current) >= half) posRef.current = 0;
         track.style.transform = `translateX(${posRef.current}px)`;
@@ -45,9 +33,6 @@ export default function Gallery() {
     };
 
     animRef.current = requestAnimationFrame(animate);
-
-    const stop = () => cancelAnimationFrame(animRef.current);
-    const start = () => animRef.current = requestAnimationFrame(animate);
 
     const onMouseDown = (e) => {
       isDragging.current = true;
@@ -66,34 +51,24 @@ export default function Gallery() {
       track.style.cursor = 'grab';
     };
 
-    track.addEventListener('mouseenter', stop);
-    track.addEventListener('mouseleave', start);
     track.addEventListener('mousedown', onMouseDown);
     window.addEventListener('mousemove', onMouseMove);
     window.addEventListener('mouseup', onMouseUp);
 
     return () => {
       cancelAnimationFrame(animRef.current);
-      track.removeEventListener('mouseenter', stop);
-      track.removeEventListener('mouseleave', start);
       track.removeEventListener('mousedown', onMouseDown);
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('mouseup', onMouseUp);
     };
   }, [images.length]);
 
-  if (loading || images.length === 0) return null;
+  if (images.length === 0) return null;
 
   const doubled = [...images, ...images];
 
   return (
     <section className="gallery-section">
-      <div className="gallery-head">
-        <h2 className="section-title">
-          My <span>Achievements & Gallery</span>
-        </h2>
-      </div>
-
       <div className="gallery-wrapper">
         <div className="fade-l" />
         <div className="fade-r" />
@@ -102,20 +77,17 @@ export default function Gallery() {
           {doubled.map((item, i) => (
             <div key={i} className="g-card" onClick={() => setLightbox(item)}>
               
+              {/* IMAGE */}
               <div className="g-img-wrap">
-                {item.image_url && (
-                  <img
-                    src={item.image_url}
-                    alt={item.title}
-                    className="g-img"
-                  />
-                )}
+                <img
+                  src={item.image_url}
+                  alt={item.title}
+                  className="g-img"
+                />
               </div>
 
+              {/* TITLE BELOW IMAGE */}
               <div className="g-footer">
-                <span className="g-badge">
-                  {item.category}
-                </span>
                 <p className="g-title">{item.title}</p>
               </div>
 
@@ -124,14 +96,17 @@ export default function Gallery() {
         </div>
       </div>
 
+      {/* LIGHTBOX */}
       {lightbox && (
         <div className="lightbox" onClick={() => setLightbox(null)}>
           <div className="lightbox-box" onClick={(e) => e.stopPropagation()}>
-            <button className="lb-close">✕</button>
-            <img src={lightbox.image_url} alt="" className="lb-img" />
+            <button className="lb-close" onClick={() => setLightbox(null)}>✕</button>
+
+            <img src={lightbox.image_url} alt={lightbox.title} className="lb-img" />
+
             <div className="lb-info">
-              <h3>{lightbox.title}</h3>
-              <p>{lightbox.caption}</p>
+              <h3 className="lb-title">{lightbox.title}</h3>
+              {lightbox.caption && <p className="lb-caption">{lightbox.caption}</p>}
             </div>
           </div>
         </div>
