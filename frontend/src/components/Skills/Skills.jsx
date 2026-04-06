@@ -108,7 +108,7 @@ export default function Skills({ data }) {
       <div className="skills-header fade-in" ref={ref}>
         
         <h2 className="skills-title">
-          My <span className="skills-title-accent">I Experience </span>
+          My <span className="skills-title-accent">Experience </span>
         </h2>
         
       </div>
