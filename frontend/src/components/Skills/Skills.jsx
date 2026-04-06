@@ -106,9 +106,9 @@ export default function Skills({ data }) {
 
       {/* ── Header ── */}
       <div className="skills-header fade-in" ref={ref}>
-        
+       
         <h2 className="skills-title">
-          My <span className="skills-title-accent">Experience </span>
+          My <span className="skills-title-accent">Tech Stack</span>
         </h2>
         
       </div>
@@ -224,31 +224,37 @@ function SkillsCanvas({ frontend, backend, databases }) {
       };
 
       // LEFT — frontend (stacked vertically)
+      const isMobile  = W < 480;
+      const isTablet  = W < 768;
+      const leftX     = isMobile ? W * 0.13 : isTablet ? W * 0.12 : W * 0.10;
+      const rightX    = isMobile ? W * 0.87 : isTablet ? W * 0.88 : W * 0.90;
+      const xWiggleAmt = isMobile ? 10 : 20;
+
       const leftCount = frontend.length;
-      const leftGap   = Math.min(108, (H * 0.72) / Math.max(leftCount, 1));
+      const leftGap   = Math.min(isMobile ? 80 : 108, (H * 0.72) / Math.max(leftCount, 1));
       const leftStartY = cy - ((leftCount - 1) * leftGap) / 2;
       document.querySelectorAll('[data-side="left"]').forEach((el) => {
         const i = parseInt(el.dataset.idx);
-        const xWiggle = i % 2 === 0 ? 0 : 20;
-        el.style.left = (W * 0.10 + xWiggle) + 'px';
+        const xWiggle = i % 2 === 0 ? 0 : xWiggleAmt;
+        el.style.left = (leftX + xWiggle) + 'px';
         el.style.top  = (leftStartY + i * leftGap) + 'px';
       });
 
       // RIGHT — backend
       const rightCount = backend.length;
-      const rightGap   = Math.min(108, (H * 0.72) / Math.max(rightCount, 1));
+      const rightGap   = Math.min(isMobile ? 80 : 108, (H * 0.72) / Math.max(rightCount, 1));
       const rightStartY = cy - ((rightCount - 1) * rightGap) / 2;
       document.querySelectorAll('[data-side="right"]').forEach((el) => {
         const i = parseInt(el.dataset.idx);
-        const xWiggle = i % 2 === 0 ? 0 : -20;
-        el.style.left = (W * 0.90 + xWiggle) + 'px';
+        const xWiggle = i % 2 === 0 ? 0 : -xWiggleAmt;
+        el.style.left = (rightX + xWiggle) + 'px';
         el.style.top  = (rightStartY + i * rightGap) + 'px';
       });
 
       // BOTTOM — databases spread in arc below hub
-      const dbCount = databases.length;
-      const dbY     = cy + 180;
-      const dbSpread = Math.min(W * 0.55, dbCount * 110);
+      const dbCount  = databases.length;
+      const dbY      = cy + (isMobile ? 140 : 180);
+      const dbSpread = Math.min(W * (isMobile ? 0.72 : 0.55), dbCount * (isMobile ? 72 : 110));
       document.querySelectorAll('[data-side="bottom"]').forEach((el) => {
         const i = parseInt(el.dataset.idx);
         const fraction = dbCount === 1 ? 0.5 : i / (dbCount - 1);

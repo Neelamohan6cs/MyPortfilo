@@ -1,0 +1,279 @@
+/* ============================================================
+   LOADING — light / white theme
+   All text, particles, and orbs tuned for a bright background
+   ============================================================ */
+
+.ld-root {
+  position: fixed;
+  inset: 0;
+  background: var(--bg, #f8faff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+/* ── Ambient orbs (soft, light-mode tinted) ──────────────── */
+.ld-orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.ld-orb1 {
+  width: 560px; height: 560px;
+  background: radial-gradient(circle, rgba(59,130,246,.10) 0%, transparent 70%);
+  top: -180px; left: -150px;
+  animation: orbDrift 9s ease-in-out infinite alternate;
+}
+.ld-orb2 {
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(6,182,212,.08) 0%, transparent 70%);
+  bottom: -120px; right: -90px;
+  animation: orbDrift 7s ease-in-out infinite alternate-reverse;
+}
+.ld-orb3 {
+  width: 240px; height: 240px;
+  background: radial-gradient(circle, rgba(139,92,246,.07) 0%, transparent 70%);
+  top: 80px; right: 100px;
+  animation: orbDrift 11s ease-in-out infinite alternate;
+}
+@keyframes orbDrift {
+  from { transform: translate(0, 0); }
+  to   { transform: translate(36px, 24px); }
+}
+
+/* ── Subtle dot grid ─────────────────────────────────────── */
+.ld-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(59,130,246,.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59,130,246,.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+
+/* ── Floating particles (more transparent on light bg) ───── */
+.ld-particles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.ld-particle {
+  position: absolute;
+  border-radius: 50%;
+  width:  var(--size, 4px);
+  height: var(--size, 4px);
+  background: var(--color, #3b82f6);
+  left:  var(--left, 50%);
+  bottom: -10px;
+  opacity: 0;
+  animation: particleRise var(--dur, 6s) var(--delay, 0s) linear infinite;
+}
+@keyframes particleRise {
+  0%   { opacity: 0;   transform: translateY(0) scale(0.5); }
+  10%  { opacity: 0.35; }
+  90%  { opacity: 0.05; }
+  100% { opacity: 0;   transform: translateY(-480px) scale(0.3); }
+}
+
+/* ── Center layout ───────────────────────────────────────── */
+.ld-center {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 24px;
+  max-width: 480px;
+  width: 100%;
+}
+
+/* ── Triple-ring spinner ─────────────────────────────────── */
+.ld-rings {
+  position: relative;
+  width: 88px; height: 88px;
+  margin-bottom: 32px;
+  animation: popIn .6s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes popIn {
+  from { opacity: 0; transform: scale(.3); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.ld-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 2.5px solid transparent;
+}
+.ld-ring1 {
+  inset: 0;
+  border-top-color: #3b82f6;
+  border-right-color: #3b82f6;
+  animation: spin 1.4s linear infinite;
+}
+.ld-ring2 {
+  inset: 10px;
+  border-bottom-color: #06b6d4;
+  border-left-color: #06b6d4;
+  animation: spin 1.0s linear infinite reverse;
+}
+.ld-ring3 {
+  inset: 22px;
+  border-top-color: #8b5cf6;
+  animation: spin 1.9s linear infinite;
+}
+.ld-ring-core {
+  position: absolute;
+  inset: 34px;
+  border-radius: 50%;
+  background: #3b82f6;
+  animation: corePulse 2s ease-in-out infinite;
+}
+@keyframes spin      { to { transform: rotate(360deg); } }
+@keyframes corePulse { 0%,100% { transform: scale(.8); opacity: .6; } 50% { transform: scale(1.15); opacity: 1; } }
+
+/* ── Typography — dark text on light bg ──────────────────── */
+.ld-greet {
+  font-family: var(--fh, system-ui, sans-serif);
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #94a3b8;               /* slate-400 */
+  margin-bottom: 10px;
+  animation: slideUp .5s .15s ease both;
+}
+.ld-headline {
+  font-family: var(--fh, system-ui, sans-serif);
+  font-size: clamp(1.55rem, 4vw, 2.1rem);
+  font-weight: 800;
+  color: #0f172a;               /* slate-900 */
+  line-height: 1.2;
+  text-align: center;
+  margin-bottom: 8px;
+  animation: slideUp .5s .25s ease both;
+}
+.ld-accent  { color: #3b82f6; }
+.ld-tagline {
+  font-family: var(--fh, system-ui, sans-serif);
+  font-size: .84rem;
+  color: #64748b;               /* slate-500 */
+  margin-bottom: 36px;
+  animation: slideUp .5s .35s ease both;
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Step trail ──────────────────────────────────────────── */
+.ld-steps {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 28px;
+  animation: slideUp .5s .45s ease both;
+}
+.ld-step {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--fm, monospace);
+  font-size: .68rem;
+  font-weight: 600;
+  color: #cbd5e1;               /* slate-300 — inactive */
+  transition: color .4s;
+}
+.ld-step + .ld-step::before {
+  content: '·';
+  margin-right: 4px;
+  color: #e2e8f0;
+}
+.ld-step--done   { color: #3b82f6; }
+.ld-step--active { color: #0f172a; }
+
+.ld-step-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #e2e8f0;          /* slate-200 */
+  transition: background .4s, transform .3s;
+  flex-shrink: 0;
+}
+.ld-step--done   .ld-step-dot { background: #3b82f6; }
+.ld-step--active .ld-step-dot {
+  background: #3b82f6;
+  transform: scale(1.5);
+  animation: stepBlink .9s ease-in-out infinite;
+}
+@keyframes stepBlink { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
+
+/* ── Progress bar ────────────────────────────────────────── */
+.ld-bar-wrap {
+  width: 100%;
+  max-width: 340px;
+  margin-bottom: 8px;
+  animation: slideUp .5s .55s ease both;
+}
+.ld-bar-track {
+  height: 4px;
+  background: #e2e8f0;          /* slate-200 track */
+  border-radius: 99px;
+  overflow: visible;
+  position: relative;
+}
+.ld-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #06b6d4);
+  border-radius: 99px;
+  transition: width .5s ease;
+  position: relative;
+}
+/* glowing tip dot */
+.ld-bar-fill::after {
+  content: '';
+  position: absolute;
+  right: -4px; top: -4px;
+  width: 11px; height: 11px;
+  border-radius: 50%;
+  background: #06b6d4;
+  box-shadow: 0 0 0 3px rgba(6,182,212,.2);
+}
+.ld-bar-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  font-family: var(--fm, monospace);
+  font-size: .7rem;
+  font-weight: 600;
+  color: #94a3b8;               /* slate-400 */
+}
+
+/* ── Tip ─────────────────────────────────────────────────── */
+.ld-tip-wrap {
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 24px;
+  animation: slideUp .5s .65s ease both;
+}
+.ld-tip {
+  font-family: var(--fh, system-ui, sans-serif);
+  font-size: .8rem;
+  color: #94a3b8;               /* slate-400 */
+  text-align: center;
+  max-width: 320px;
+  line-height: 1.6;
+  transition: opacity .35s ease, transform .35s ease;
+  margin: 0;
+}
+.ld-tip--in  { opacity: 1; transform: translateY(0); }
+.ld-tip--out { opacity: 0; transform: translateY(6px); }
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .ld-rings     { width: 68px; height: 68px; }
+  .ld-ring3     { inset: 18px; }
+  .ld-ring-core { inset: 28px; }
+  .ld-bar-wrap  { max-width: 260px; }
+  .ld-orb1      { width: 300px; height: 300px; }
+  .ld-orb2      { width: 220px; height: 220px; }
+}

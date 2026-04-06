@@ -240,13 +240,13 @@
 
 /* tile box — matches .project-card with border accent */
 .skill-tile-box {
-  width: 68px;
-  height: 68px;
+  width: 58px;
+  height: 58px;
   border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: white;
+  background:rgb(220, 237, 245);
   border: 1.5px solid rgba(0,0,0,0.08);
   box-shadow:
     0 2px 8px rgba(0,0,0,0.06),
