@@ -24,7 +24,7 @@ export default function Gallery() {
 
     const animate = () => {
       if (!isDragging.current) {
-        posRef.current -= 0.4;
+        posRef.current -= 1.4;
         const half = track.scrollWidth / 2;
         if (Math.abs(posRef.current) >= half) posRef.current = 0;
         track.style.transform = `translateX(${posRef.current}px)`;
