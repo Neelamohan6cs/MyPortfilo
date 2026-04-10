@@ -31,7 +31,7 @@ export default function Navbar() {
 
   return (
     <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
-      <span className="nav-logo">NR.</span>
+      <span className="nav-logo">NeelaMohan</span>
 
       <ul className="nav-links">
         {NAV_LINKS.map((link) => (
