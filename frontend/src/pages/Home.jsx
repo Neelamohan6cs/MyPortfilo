@@ -14,7 +14,7 @@ import Contact from '../components/Contact/Contact';
 import Footer from '../components/Footer/Footer';
 
 import Loading from './Loading';
-import Tools from '../components/tools/Tools';
+// import Tools from '../components/tools/Tools';
 
 export default function Home() {
   const [data,    setData]    = useState(null);
@@ -44,7 +44,7 @@ export default function Home() {
       <Gallery />
       
       <Skills         data={data?.skills          || []} />
-      <Tools/>
+      {/* <Tools/> */}
       <Projects       data={data?.projects         || []} />
       <Internships    data={data?.internships       || []} />
       <Education      data={data?.education         || []} />
