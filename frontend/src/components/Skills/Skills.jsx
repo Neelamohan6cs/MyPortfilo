@@ -1,490 +1,276 @@
-import React from 'react';
-import useFadeIn from '../../hooks/useFadeIn';
+import React, { useState } from 'react';
 import './Skills.css';
 
-/* ============================================================================
-   MERN / FULL-STACK TECH NETWORK
-   ----------------------------------------------------------------------------
-   Architecture mirrors the real MERN request lifecycle instead of a generic
-   "frontend / backend / db" cloud:
+/* ─────────────────────────────────────────────────────────
+   MERN Stack — Skills Component
+   Layout (PC):  Tooling top | Frontend — AWS — Backend | DB bottom
+   Layout (Mobile): same order, stacked vertically
+   Animated data packets: blue (request) & green (response)
+───────────────────────────────────────────────────────── */
 
-     CLIENT (React, Redux, Next.js, TS, Tailwind...)
-         │  HTTP / REST / GraphQL
-         ▼
-     SERVER (Node, Express, Socket.io, JWT...)
-         │  Driver / ODM
-         ▼
-     DATA (MongoDB, Mongoose, Redis...)
+const ICON_BASE = 'https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/';
 
-   A 4th ring — TOOLING (Git, Docker, AWS, Postman, VS Code) — sits around the
-   hub since these support all three layers rather than belonging to one.
-   The hub itself spells out M·E·R·N, which is the actual signature of this
-   stack rather than a decorative cloud/docker glyph pairing.
-============================================================================ */
-
-// ─── Skill icon (hides on broken img, falls back to monogram chip) ─────────
-const SkillIcon = ({ src, alt, color }) => {
-  const [show, setShow] = React.useState(true);
-
-  if (!show || !src) {
-    const letter = (alt || '?').trim().charAt(0).toUpperCase();
-    return (
-      <span className="skill-tile-monogram" style={{ '--glow': color }}>
-        {letter}
-      </span>
-    );
-  }
-
-  return (
-    <img
-      src={src}
-      alt={alt}
-      className="skill-tile-img"
-      onError={() => setShow(false)}
-    />
-  );
+const SKILLS = {
+  frontend: [
+    { name: 'React',       svg: 'react',              color: '#61dbfb' },
+    { name: 'Next.js',     svg: 'nextdotjs',          color: '#555555' },
+    { name: 'TypeScript',  svg: 'typescript',         color: '#3178c6' },
+    { name: 'Redux',       svg: 'redux',              color: '#764abc' },
+    { name: 'Tailwind',    svg: 'tailwindcss',        color: '#38bdf8' },
+    { name: 'HTML5',       svg: 'html5',              color: '#e44d26' },
+    { name: 'CSS3',        svg: 'css3',               color: '#264de4' },
+    { name: 'Sass',        svg: 'sass',               color: '#cc6699' },
+  ],
+  backend: [
+    { name: 'Node.js',     svg: 'nodedotjs',          color: '#68a063' },
+    { name: 'Express',     svg: 'express',            color: '#888888' },
+    { name: 'GraphQL',     svg: 'graphql',            color: '#e535ab' },
+    { name: 'Socket.io',   svg: 'socketdotio',        color: '#010101' },
+    { name: 'Python',      svg: 'python',             color: '#ffd43b' },
+    { name: 'Django',      svg: 'django',             color: '#0c4b33' },
+  ],
+  database: [
+    { name: 'MongoDB',     svg: 'mongodb',            color: '#00ed64' },
+    { name: 'Redis',       svg: 'redis',              color: '#ff4438' },
+    { name: 'MySQL',       svg: 'mysql',              color: '#00758f' },
+    { name: 'Firebase',    svg: 'firebase',           color: '#ff9800' },
+    { name: 'PostgreSQL',  svg: 'postgresql',         color: '#336791' },
+  ],
+  tooling: [
+    { name: 'Git',         svg: 'git',                color: '#f05032' },
+    { name: 'GitHub',      svg: 'github',             color: '#888888' },
+    { name: 'Docker',      svg: 'docker',             color: '#2496ed' },
+    { name: 'VS Code',     svg: 'visualstudiocode',   color: '#007acc' },
+    { name: 'Postman',     svg: 'postman',            color: '#ff6c37' },
+    { name: 'npm',         svg: 'npm',                color: '#cb3837' },
+  ],
 };
 
-// ─── Icon map ────────────────────────────────────────────────────────────────
-const ICONS = {
-  // Client / Frontend
-  html:        '/img/skills/html.png',
-  html5:       '/img/skills/html.png',
-  css:         '/img/skills/css.png',
-  css3:        '/img/skills/css.png',
-  javascript:  '/img/skills/javascript.png',
-  js:          '/img/skills/javascript.png',
-  typescript:  '/img/skills/typescript.png',
-  ts:          '/img/skills/typescript.png',
-  react:       '/img/skills/react.png',
-  reactjs:     '/img/skills/react.png',
-  redux:       '/img/skills/redux.png',
-  nextjs:      '/img/skills/nextjs.png',
-  next:        '/img/skills/nextjs.png',
-  tailwind:    '/img/skills/tailwind.png',
-  tailwindcss: '/img/skills/tailwind.png',
-  bootstrap:   '/img/skills/bootstrap.png',
-  sass:        '/img/skills/sass.png',
-
-  // Server / Backend
-  node:        '/img/skills/node.png',
-  nodejs:      '/img/skills/node.png',
-  express:     '/img/skills/express.png',
-  expressjs:   '/img/skills/express.png',
-  socketio:    '/img/skills/socketio.png',
-  graphql:     '/img/skills/graphql.png',
-  jwt:         '/img/skills/jwt.png',
-  rest:        '/img/skills/rest.png',
-  restapi:     '/img/skills/rest.png',
-  python:      '/img/skills/python.png',
-  django:      '/img/skills/django.png',
-  flask:       '/img/skills/flask.png',
-
-  // Data
-  mongodb:     '/img/skills/mongodb.png',
-  mongoose:    '/img/skills/mongoose.png',
-  redis:       '/img/skills/redis.png',
-  mysql:       '/img/skills/mysql.png',
-  postgresql:  '/img/skills/postgresql.png',
-  postgres:    '/img/skills/postgresql.png',
-  firebase:    '/img/skills/firebase.png',
-
-  // Tooling / DevOps
-  git:         '/img/skills/git.png',
-  github:      '/img/skills/github.png',
-  docker:      '/img/skills/docker.png',
-  aws:         '/img/skills/aws.png',
-  vercel:      '/img/skills/vercel.png',
-  postman:     '/img/skills/postman.png',
-  vscode:      '/img/skills/vscode.png',
-  npm:         '/img/skills/npm.png',
-};
-
-const getSkillIcon = (name) => {
-  if (!name) return null;
-  const key = name.toLowerCase().replace(/[^a-z0-9]/g, '');
-  return ICONS[key] || null;
-};
-
-// ─── Brand colour per skill ──────────────────────────────────────────────────
-const COLORS = {
-  html: '#e44d26',   html5: '#e44d26',
-  css: '#264de4',    css3: '#264de4',
-  javascript: '#f7df1e', js: '#f7df1e',
-  typescript: '#3178c6', ts: '#3178c6',
-  react: '#61dbfb',  reactjs: '#61dbfb',
-  redux: '#764abc',
-  nextjs: '#ffffff', next: '#ffffff',
-  tailwind: '#38bdf8', tailwindcss: '#38bdf8',
-  bootstrap: '#7952b3',
-  sass: '#cc6699',
-
-  node: '#68a063',   nodejs: '#68a063',
-  express: '#9e9e9e', expressjs: '#9e9e9e',
-  socketio: '#ffffff',
-  graphql: '#e535ab',
-  jwt: '#d63aff',
-  rest: '#2dd4bf', restapi: '#2dd4bf',
-  python: '#ffd43b',
-  django: '#0c4b33',
-  flask: '#aaaaaa',
-
-  mongodb: '#00ed64',
-  mongoose: '#88001a',
-  redis: '#ff4438',
-  mysql: '#00758f',
-  postgresql: '#336791', postgres: '#336791',
-  firebase: '#ff9800',
-
-  git: '#f05032',
-  github: '#cccccc',
-  docker: '#2496ed',
-  aws: '#ff9900',
-  vercel: '#ffffff',
-  postman: '#ff6c37',
-  vscode: '#007acc',
-  npm: '#cb3837',
-};
-
-const getSkillColor = (name) => {
-  if (!name) return '#22d3ee';
-  const key = name.toLowerCase().replace(/[^a-z0-9]/g, '');
-  return COLORS[key] || '#22d3ee';
-};
-
-// ─── MERN layer membership (this is the real architecture, not a guess) ────
-const CLIENT_KEYS  = ['html','html5','css','css3','javascript','js','typescript','ts','react','reactjs','redux','nextjs','next','tailwind','tailwindcss','bootstrap','sass'];
-const SERVER_KEYS  = ['node','nodejs','express','expressjs','socketio','graphql','jwt','rest','restapi','python','django','flask'];
-const DATA_KEYS    = ['mongodb','mongoose','redis','mysql','postgresql','postgres','firebase'];
-const TOOLING_KEYS = ['git','github','docker','aws','vercel','postman','vscode','npm'];
-
-const LAYER_META = {
-  client:  { label: 'Client',  tag: 'UI'  },
-  server:  { label: 'Server',  tag: 'API' },
-  data:    { label: 'Data',    tag: 'DB'  },
-  tooling: { label: 'Tooling', tag: 'OPS' },
-};
-
-const getLayer = (name) => {
-  const key = (name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-  if (CLIENT_KEYS.includes(key))  return 'client';
-  if (DATA_KEYS.includes(key))    return 'data';
-  if (TOOLING_KEYS.includes(key)) return 'tooling';
-  if (SERVER_KEYS.includes(key))  return 'server';
-  return 'server'; // unknown → assume backend utility
-};
-
-// ─── Main component ──────────────────────────────────────────────────────────
-export default function Skills({ data }) {
-  const ref = useFadeIn();
-
-  const allSkills = (data || []).filter((s) => s && s.name);
-
-  const clientSkills  = allSkills.filter((s) => getLayer(s.name) === 'client');
-  const serverSkills  = allSkills.filter((s) => getLayer(s.name) === 'server');
-  const dataSkills    = allSkills.filter((s) => getLayer(s.name) === 'data');
-  const toolingSkills = allSkills.filter((s) => getLayer(s.name) === 'tooling');
-
-  return (
-    <section id="skills" className="skills-section">
-
-      {/* ── Header ── */}
-      <div className="skills-header fade-in" ref={ref}>
-        <span className="skills-eyebrow">M·E·R·N — Full Stack</span>
-        <h2 className="skills-title">
-          My <span className="skills-title-accent">Tech Stack</span>
-        </h2>
-        <p className="skills-subtitle">
-          From the browser to the database — one connected request lifecycle.
-        </p>
-      </div>
-
-      {/* ── Network card ── */}
-      <div className="skills-card">
-
-        {/* column labels — read like an architecture diagram, not decoration */}
-        <div className="skills-col-labels">
-          <span className="skills-col-label label-client">⌘ Client</span>
-          <span className="skills-col-label label-tooling">⚙ Tooling</span>
-          <span className="skills-col-label label-server">⬡ Server</span>
-        </div>
-
-        {/* canvas + positioned tiles */}
-        <div className="skills-network" id="skills-network">
-          <canvas id="skills-canvas" className="skills-canvas" />
-
-          {/* CENTER HUB — the MERN acronym itself */}
-          <div className="skills-hub" id="skills-hub">
-            <div className="skills-hub-ring">
-              <div className="skills-hub-circle">
-                <div className="skills-hub-letters">
-                  <span className="hub-letter hub-letter-m">M</span>
-                  <span className="hub-letter hub-letter-e">E</span>
-                  <span className="hub-letter hub-letter-r">R</span>
-                  <span className="hub-letter hub-letter-n">N</span>
-                </div>
-                <div className="skills-hub-label">Full-Stack Core</div>
-              </div>
-            </div>
-          </div>
-
-          {/* CLIENT — left (React layer) */}
-          {clientSkills.map((skill, i) => (
-            <SkillTile
-              key={skill.id ?? skill.name}
-              skill={skill}
-              layer="client"
-              side="left"
-              idx={i}
-              total={clientSkills.length}
-            />
-          ))}
-
-          {/* SERVER — right (Express/Node layer) */}
-          {serverSkills.map((skill, i) => (
-            <SkillTile
-              key={skill.id ?? skill.name}
-              skill={skill}
-              layer="server"
-              side="right"
-              idx={i}
-              total={serverSkills.length}
-            />
-          ))}
-
-          {/* DATA — bottom arc (Mongo layer) */}
-          {dataSkills.map((skill, i) => (
-            <SkillTile
-              key={skill.id ?? skill.name}
-              skill={skill}
-              layer="data"
-              side="bottom"
-              idx={i}
-              total={dataSkills.length}
-            />
-          ))}
-
-          {/* TOOLING — top arc (supports all layers) */}
-          {toolingSkills.map((skill, i) => (
-            <SkillTile
-              key={skill.id ?? skill.name}
-              skill={skill}
-              layer="tooling"
-              side="top"
-              idx={i}
-              total={toolingSkills.length}
-            />
-          ))}
-        </div>
-
-        {/* Data label below network */}
-        {dataSkills.length > 0 && (
-          <div className="skills-db-label">
-            <span className="skills-col-label label-db">🗄 Database</span>
-          </div>
-        )}
-      </div>
-
-      {/* ── Canvas animator ── */}
-      <SkillsCanvas
-        client={clientSkills}
-        server={serverSkills}
-        data={dataSkills}
-        tooling={toolingSkills}
-      />
-    </section>
-  );
-}
-
-// ─── Single tile ─────────────────────────────────────────────────────────────
-function SkillTile({ skill, layer, side, idx, total }) {
-  const color = getSkillColor(skill.name);
-  const src   = getSkillIcon(skill.name);
-  const tag   = LAYER_META[layer]?.tag ?? '';
+// ── Chip: icon + label, with fallback monogram ──────────────────────────────
+// simple-icons SVGs are flat monochrome shapes — loading them as a plain
+// <img> ignores skill.color entirely. We mask the shape and paint the exact
+// brand color through it via background-color, so every icon shows its real
+// color instead of one uniform block color. A hidden probe <img> preserves
+// the original load-failure → monogram fallback behavior.
+function Chip({ skill }) {
+  const [imgOk, setImgOk] = useState(true);
+  const iconUrl = `${ICON_BASE}${skill.svg}.svg`;
 
   return (
     <div
-      className="skill-tile"
-      data-side={side}
-      data-idx={idx}
-      data-total={total}
-      data-color={color}
-      style={{ '--glow': color, animationDelay: `${idx * 0.1}s` }}
+      className="sk-chip"
+      title={skill.name}
+      style={{ borderColor: `${skill.color}55` }}
     >
-      <div className="skill-tile-box" style={{ '--glow': color }}>
-        <SkillIcon src={src} alt={skill.name} color={color} />
-      </div>
-      <span className="skill-tile-name">{skill.name}</span>
-      <span className="skill-tile-tag" style={{ '--glow': color }}>{tag}</span>
+      <img
+        src={iconUrl}
+        alt=""
+        aria-hidden="true"
+        className="sk-chip-probe"
+        onError={() => setImgOk(false)}
+      />
+      {imgOk ? (
+        <div
+          className="sk-chip-icon"
+          style={{
+            backgroundColor: skill.color,
+            WebkitMaskImage: `url(${iconUrl})`,
+            maskImage: `url(${iconUrl})`,
+          }}
+        />
+      ) : (
+        <div
+          className="sk-chip-fb"
+          style={{ background: `${skill.color}22`, color: skill.color }}
+        >
+          {skill.name[0]}
+        </div>
+      )}
+      <span className="sk-chip-lbl" style={{ color: skill.color }}>
+        {skill.name}
+      </span>
     </div>
   );
 }
 
-// ─── Canvas — glowing lines + traveling dots ──────────────────────────────────
-function SkillsCanvas({ client, server, data, tooling }) {
-  React.useEffect(() => {
-    let animId = null;
+// ── Chip group ──────────────────────────────────────────────────────────────
+function Chips({ skills }) {
+  return (
+    <div className="sk-chips">
+      {skills.map(s => <Chip key={s.name} skill={s} />)}
+    </div>
+  );
+}
 
-    function init() {
-      const canvas    = document.getElementById('skills-canvas');
-      const container = document.getElementById('skills-network');
-      if (!canvas || !container) return;
+// ── Layer pill label ─────────────────────────────────────────────────────────
+function Pill({ children, variant }) {
+  return <div className={`sk-pill sk-pill-${variant}`}>{children}</div>;
+}
 
-      const W = container.offsetWidth;
-      const H = container.offsetHeight;
-      canvas.width  = W;
-      canvas.height = H;
+// ── Layer card wrapper ───────────────────────────────────────────────────────
+function LayerCard({ skills, accentColor }) {
+  return (
+    <div className="sk-layer-box" style={{ borderColor: `${accentColor}55` }}>
+      <Chips skills={skills} />
+    </div>
+  );
+}
 
-      const ctx = canvas.getContext('2d');
-      const cx  = W / 2;
-      const cy  = H / 2;
+// ── AWS Cloud Hub ────────────────────────────────────────────────────────────
+function AwsHub() {
+  return (
+    <div className="sk-hub-col">
+      <div className="sk-hub-box">
+        <svg width="40" height="32" viewBox="0 0 40 32" fill="none" className="sk-hub-pulse">
+          <path
+            d="M32 14.5c0-.5-.1-1-.2-1.5A8 8 0 0 0 15.5 11a5.5 5.5 0 0 0-5.5 5.5c0 .3 0 .5.1.8A5.5 5.5 0 0 0 10.5 28h20a5.5 5.5 0 0 0 1.5-10.5z"
+            fill="#fff7ed"
+            stroke="#f97316"
+            strokeWidth="1.2"
+          />
+          <text
+            x="20" y="21"
+            textAnchor="middle"
+            fontSize="7.5"
+            fontWeight="800"
+            fill="#c2410c"
+            fontFamily="sans-serif"
+          >
+            AWS
+          </text>
+        </svg>
+        <div className="sk-hub-text">
+          <div className="sk-hub-title">Cloud / AWS</div>
+          <div className="sk-hub-sub">Full-Stack Core</div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-      const isMobile = W < 480;
-      const isTablet = W < 768;
-      const leftX  = isMobile ? W * 0.13 : isTablet ? W * 0.12 : W * 0.10;
-      const rightX = isMobile ? W * 0.87 : isTablet ? W * 0.88 : W * 0.90;
-      const xWiggleAmt = isMobile ? 10 : 20;
+// ── Horizontal animated arrow (request + response) ───────────────────────────
+function HArrow({ topLabel, bottomLabel, fwdColor, revColor, fwdDelay = 0, revDelay = 0.9 }) {
+  return (
+    <div className="sk-h-arrow">
+      <span className="sk-h-lbl">{topLabel}</span>
+      <div className="sk-track-pair">
+        {/* Forward */}
+        <div className="sk-track">
+          <div className="sk-track-line" style={{ background: fwdColor }} />
+          <div
+            className="sk-pkt"
+            style={{ background: fwdColor, animationDelay: `${fwdDelay}s` }}
+          />
+          <div className="sk-ah-r" style={{ '--ah-color': fwdColor }} />
+        </div>
+        {/* Return */}
+        <div className="sk-track sk-track-rev">
+          <div className="sk-ah-l" style={{ '--ah-color': revColor }} />
+          <div className="sk-track-line" style={{ background: revColor }} />
+          <div
+            className="sk-pkt sk-pkt-rev"
+            style={{ background: revColor, animationDelay: `${revDelay}s` }}
+          />
+        </div>
+      </div>
+      <span className="sk-h-lbl">{bottomLabel}</span>
+    </div>
+  );
+}
 
-      // CLIENT — left, vertically stacked
-      const clientCount  = client.length;
-      const clientGap    = Math.min(isMobile ? 80 : 108, (H * 0.62) / Math.max(clientCount, 1));
-      const clientStartY = cy - ((clientCount - 1) * clientGap) / 2;
-      document.querySelectorAll('[data-side="left"]').forEach((el) => {
-        const i = parseInt(el.dataset.idx, 10);
-        const xWiggle = i % 2 === 0 ? 0 : xWiggleAmt;
-        el.style.left = (leftX + xWiggle) + 'px';
-        el.style.top  = (clientStartY + i * clientGap) + 'px';
-      });
+// ── Vertical animated connector ──────────────────────────────────────────────
+function VConnector({ color, delay = 0 }) {
+  return (
+    <div className="sk-v-conn">
+      <div className="sk-v-line">
+        <div
+          className="sk-v-pkt"
+          style={{ background: color, animationDelay: `${delay}s` }}
+        />
+      </div>
+      <div className="sk-v-head" />
+    </div>
+  );
+}
 
-      // SERVER — right
-      const serverCount  = server.length;
-      const serverGap    = Math.min(isMobile ? 80 : 108, (H * 0.62) / Math.max(serverCount, 1));
-      const serverStartY = cy - ((serverCount - 1) * serverGap) / 2;
-      document.querySelectorAll('[data-side="right"]').forEach((el) => {
-        const i = parseInt(el.dataset.idx, 10);
-        const xWiggle = i % 2 === 0 ? 0 : -xWiggleAmt;
-        el.style.left = (rightX + xWiggle) + 'px';
-        el.style.top  = (serverStartY + i * serverGap) + 'px';
-      });
+// ── Main exported component ──────────────────────────────────────────────────
+export default function Skills() {
+  return (
+    <section id="skills" className="sk-section">
 
-      // DATA — bottom arc
-      const dataCount  = data.length;
-      const dataY      = cy + (isMobile ? 130 : 170);
-      const dataSpread = Math.min(W * (isMobile ? 0.68 : 0.5), dataCount * (isMobile ? 70 : 105));
-      document.querySelectorAll('[data-side="bottom"]').forEach((el) => {
-        const i = parseInt(el.dataset.idx, 10);
-        const fraction = dataCount === 1 ? 0.5 : i / (dataCount - 1);
-        const x = (cx - dataSpread / 2) + fraction * dataSpread;
-        el.style.left = x + 'px';
-        el.style.top  = dataY + 'px';
-      });
+      {/* ── Header ── */}
+      <div className="sk-header">
+      {/* <span className="sk-eyebrow">MERN Stack</span> */}
+        <h2 className="sk-h2">
+          My <span className="sk-accent">Tech Stack</span>
+        </h2>
+        {/* <p className="sk-sub">How a full-stack request travels: Browser → Cloud → Server → Database</p> */}
+      </div>
 
-      // TOOLING — top arc
-      const toolingCount  = tooling.length;
-      const toolingY      = cy - (isMobile ? 130 : 170);
-      const toolingSpread = Math.min(W * (isMobile ? 0.62 : 0.42), toolingCount * (isMobile ? 64 : 95));
-      document.querySelectorAll('[data-side="top"]').forEach((el) => {
-        const i = parseInt(el.dataset.idx, 10);
-        const fraction = toolingCount === 1 ? 0.5 : i / (toolingCount - 1);
-        const x = (cx - toolingSpread / 2) + fraction * toolingSpread;
-        el.style.left = x + 'px';
-        el.style.top  = toolingY + 'px';
-      });
+      {/* ── Cloud / deployment frame ── */}
+      <div className="sk-cloud-wrap">
+        <div className="sk-cloud-badge">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z" />
+          </svg>
+          Deployed on Cloud / AWS
+        </div>
 
-      // ── Animate ─────────────────────────────────────────────────────────────
-      let t = 0;
+        {/* ── Tooling top ── */}
+        <div className="sk-top-block">
+          <Pill variant="tool">Tooling / DevOps</Pill>
+          <Chips skills={SKILLS.tooling} />
+        </div>
 
-      function frame() {
-        ctx.clearRect(0, 0, W, H);
-        t += 0.013;
+        <VConnector color="#a855f7" delay={0} />
 
-        document.querySelectorAll('.skill-tile').forEach((tile, globalIdx) => {
-          const nx = parseFloat(tile.style.left);
-          const ny = parseFloat(tile.style.top);
-          if (isNaN(nx)) return;
+        {/* ── Main flow row: Frontend | AWS | Backend ── */}
+        <div className="sk-flow-row">
 
-          const color = tile.dataset.color || '#22d3ee';
-          const side  = tile.dataset.side;
+          <div className="sk-panel">
+            <Pill variant="fe">Frontend / Client</Pill>
+            <LayerCard skills={SKILLS.frontend} accentColor="#3b82f6" />
+          </div>
 
-          // Control point for curve — flow direction matches request lifecycle:
-          // client -> hub -> server -> hub -> data, tooling floats in from top
-          let cpx, cpy;
-          if (side === 'left') {
-            cpx = nx + (cx - nx) * 0.5;
-            cpy = ny + (cy - ny) * 0.35;
-          } else if (side === 'right') {
-            cpx = nx + (cx - nx) * 0.5;
-            cpy = ny + (cy - ny) * 0.35;
-          } else if (side === 'top') {
-            cpx = (nx + cx) / 2;
-            cpy = ny + 90;
-          } else {
-            // bottom — curve upward toward hub
-            cpx = (nx + cx) / 2;
-            cpy = ny - 90;
-          }
+          <HArrow
+            topLabel="Request"
+            bottomLabel="Response"
+            fwdColor="#3b82f6"
+            revColor="#22c55e"
+            fwdDelay={0}
+            revDelay={0.9}
+          />
 
-          // Glow line
-          const grad = ctx.createLinearGradient(nx, ny, cx, cy);
-          grad.addColorStop(0,   color + '22');
-          grad.addColorStop(0.5, color + '77');
-          grad.addColorStop(1,   color + 'dd');
+          <AwsHub />
 
-          ctx.beginPath();
-          ctx.moveTo(nx, ny);
-          ctx.quadraticCurveTo(cpx, cpy, cx, cy);
-          ctx.strokeStyle = grad;
-          ctx.lineWidth   = 1.8;
-          ctx.shadowBlur  = 10;
-          ctx.shadowColor = color;
-          ctx.stroke();
-          ctx.shadowBlur  = 0;
+          <HArrow
+            topLabel="API Call"
+            bottomLabel="Data"
+            fwdColor="#3b82f6"
+            revColor="#22c55e"
+            fwdDelay={0.4}
+            revDelay={1.4}
+          />
 
-          // Traveling dot
-          const p  = Math.sin(t * 0.85 + globalIdx * 1.05) * 0.5 + 0.5;
-          const q  = 1 - p;
-          const dx = q * q * nx + 2 * q * p * cpx + p * p * cx;
-          const dy = q * q * ny + 2 * q * p * cpy + p * p * cy;
+          <div className="sk-panel">
+            <Pill variant="be">Backend / Server</Pill>
+            <LayerCard skills={SKILLS.backend} accentColor="#22c55e" />
+          </div>
 
-          ctx.beginPath();
-          ctx.arc(dx, dy, 4, 0, Math.PI * 2);
-          ctx.fillStyle   = color;
-          ctx.shadowBlur  = 18;
-          ctx.shadowColor = color;
-          ctx.fill();
-          ctx.shadowBlur  = 0;
+        </div>
 
-          // Ghost trail
-          const p2 = Math.max(0, p - 0.15);
-          const q2 = 1 - p2;
-          const gx = q2 * q2 * nx + 2 * q2 * p2 * cpx + p2 * p2 * cx;
-          const gy = q2 * q2 * ny + 2 * q2 * p2 * cpy + p2 * p2 * cy;
+        <VConnector color="#f59e0b" delay={0.5} />
 
-          ctx.beginPath();
-          ctx.arc(gx, gy, 2.2, 0, Math.PI * 2);
-          ctx.fillStyle   = color + '55';
-          ctx.shadowBlur  = 8;
-          ctx.shadowColor = color;
-          ctx.fill();
-          ctx.shadowBlur  = 0;
-        });
+        {/* ── Database bottom ── */}
+        <div className="sk-bottom-block">
+          <div className="sk-panel sk-panel-db">
+            <Pill variant="db">Database / Data</Pill>
+            <LayerCard skills={SKILLS.database} accentColor="#f59e0b" />
+          </div>
+        </div>
 
-        animId = requestAnimationFrame(frame);
-      }
+      </div>
 
-      if (animId) cancelAnimationFrame(animId);
-      frame();
-    }
-
-    // slight delay so DOM positions settle
-    const timeout = setTimeout(init, 80);
-    window.addEventListener('resize', init);
-    return () => {
-      clearTimeout(timeout);
-      window.removeEventListener('resize', init);
-      if (animId) cancelAnimationFrame(animId);
-    };
-  }, [client, server, data, tooling]);
-
-  return null;
+    </section>
+  );
 }
