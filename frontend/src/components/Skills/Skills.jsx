@@ -13,7 +13,7 @@ const SkillIcon = ({ src, alt }) => {
   return (
     <img
       src={src}
-@@ -17,167 +44,233 @@
+
 };
 
 // ─── Icon map ────────────────────────────────────────────────────────────────
@@ -51,46 +51,6 @@ const getSkillIcon = (name) => {
   };
   return icons[key] || null;
 };
-
-// ─── Brand colour per skill ──────────────────────────────────────────────────
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 const getSkillColor = (name) => {
   if (!name) return '#2563eb';
@@ -242,7 +202,7 @@ function SkillTile({ skill, side, idx, total }) {
   return (
     <div
       className="skill-tile"
-@@ -188,19 +281,16 @@
+
       style={{ '--glow': color, animationDelay: `${idx * 0.1}s` }}
     >
       <div className="skill-tile-box" style={{ '--glow': color }}>
@@ -263,7 +223,7 @@ function SkillsCanvas({ frontend, backend, databases }) {
   React.useEffect(() => {
     let animId = null;
 
-@@ -215,52 +305,63 @@
+
       canvas.height = H;
       const ctx = canvas.getContext('2d');
       const cx  = W / 2;
@@ -316,20 +276,10 @@ function SkillsCanvas({ frontend, backend, databases }) {
         el.style.top  = dbY + 'px';
 
 
-
-
-
-
-
-
-
-
-
-
       });
 
       // ── Animate ─────────────────────────────────────────────────────────────
-@@ -271,30 +372,31 @@
+
         t += 0.013;
 
         document.querySelectorAll('.skill-tile').forEach((tile, globalIdx) => {
@@ -364,7 +314,7 @@ function SkillsCanvas({ frontend, backend, databases }) {
           const grad = ctx.createLinearGradient(nx, ny, cx, cy);
           grad.addColorStop(0,    color + '22');
           grad.addColorStop(0.5,  color + '77');
-@@ -309,7 +411,6 @@
+
           ctx.stroke();
           ctx.shadowBlur  = 0;
 
@@ -372,7 +322,7 @@ function SkillsCanvas({ frontend, backend, databases }) {
           const p  = Math.sin(t * 0.85 + globalIdx * 1.05) * 0.5 + 0.5;
           const q  = 1 - p;
           const dx = q*q*nx + 2*q*p*cpx + p*p*cx;
-@@ -322,7 +423,6 @@
+
           ctx.fill();
           ctx.shadowBlur  = 0;
 
@@ -380,7 +330,7 @@ function SkillsCanvas({ frontend, backend, databases }) {
           const p2 = Math.max(0, p - 0.15);
           const q2 = 1 - p2;
           const gx = q2*q2*nx + 2*q2*p2*cpx + p2*p2*cx;
-@@ -343,15 +443,14 @@
+
       frame();
     }
 
